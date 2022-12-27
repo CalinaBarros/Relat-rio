@@ -1,0 +1,38 @@
+Pêndulo simples usando metodo Runge-Kutta 
+
+<script>
+    var pi = 3.14159265359, n;
+    var theta = (15 * pi)/180, omega = 0, thetaA, l = 1.5, g = 10, h = 0.02, t = 0;
+    var kt1, kt2, kt3, kt4, kw1, kw2, kw3, kw4;
+    const theta0 = theta
+
+    console.log("t", "theta", "omega", "thetaA")
+
+    for(n=1; n<=1000; n++)
+    {
+        // Cálculo das inclinações
+        kt1 = omega                                 //inclinação no início do intervalo de theta
+        kw1 = -g/l*Math.sin(theta)                  //inclinação no início do intervalo de omega
+        
+        kt2 = omega + h/2*kt1                       //inclinação no ponto médio do intervalo de theta
+        kw2 = -g/l*Math.sin(theta + h/2*kw1)        //inclinação no ponto médio do intervalo de omega
+
+        kt3 = omega + h/2*kt2                       //nova inclinação no ponto médio do intervalo de theta
+        kw3 = -g/l*Math.sin(theta + h/2*kw2)        //nova inclinação no ponto médio do intervalo de omega
+
+        kt4 = omega + h*kt3                         //inclinação no final do intervalo de theta
+        kw4 = -g/l*Math.sin(theta+h*kw3)            //inclinação no final do intervalo de omega
+
+        // Método Runge-Kutta
+        theta = theta + h/6*(kt1 + 2*kt2 + 2*kt3 + kt4)
+        omega = omega + h/6*(kw1 + 2*kw2 + 2*kw3 + kw4)
+
+        t = t + h    
+
+        thetaA = theta0*Math.cos(Math.sqrt(g/l)*t)
+
+        console.log(t, theta, omega, thetaA)
+        
+    }
+  
+</script>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="br_pt">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulo_Simples</title>
+</head>
+<body>
+<h1>
+    Simulação do pêndulo simples
+</h1>
+
+<p>
+    Comprimento do fio (L) = <input id="l" type="number" value="1"> (m)
+</p>
+<p>
+    Gravidade (g) = <input id="g" type="number" value="10"> (m/s²)
+</p>
+<p>
+    Ângulo inicial (theta) = <input id="theta0" type="number" value="15"> (grau)
+</p>
+<p>
+    <button onclick="iniciar()">Iniciar</button>
+</p>
+<p>
+    <canvas id="myCanvas" width="400" height="400" style="border:1px solid #000000;"></canvas>
+</p>
+
+<script>
+    //variáveis do desenho (canva)
+    var canvas = document.getElementById("myCanvas");
+    var pincel = canvas.getContext("2d");
+
+    //variáveis para cálculo        
+        var l = 1.5//Number(document.getElementById("l").value);
+        var g = 10//Number(document.getElementById("g").value)
+        var theta0;
+        var pi = 3.14159265359;
+        var omega = 0, theta, h = 0.005, t=0, thetaA;
+        var kt1, kt2, kt3, kt4, kw1, kw2, kw3, kw4, x=200, y=265;            
+        
+   function desenhar()
+   {
+        pincel.moveTo(300, 100);
+        pincel.lineTo(100, 100);
+        
+        pincel.moveTo(200, 100);
+        pincel.lineTo(200, 250);
+        pincel.stroke();
+        
+        pincel.beginPath()
+        pincel.arc(x, y, 15, 0, Math.PI * 2);
+        pincel.stroke();
+   } 
+       
+    desenhar()
+
+   function rk() //função Runge-Kutta
+   {
+        // Cálculo das inclinações
+        kt1 = omega                                 //inclinação no início do intervalo de theta
+        kw1 = -g/l*Math.sin(theta)                  //inclinação no início do intervalo de omega
+        
+        kt2 = omega + 0.5*h*kw1                       //inclinação no ponto médio do intervalo de theta
+        kw2 = -g/l*Math.sin(theta + 0.5*h*kt1)        //inclinação no ponto médio do intervalo de omega
+
+        kt3 = omega + 0.5*h*kw2                       //nova inclinação no ponto médio do intervalo de theta
+        kw3 = -g/l*Math.sin(theta + 0.5*h*kt2)        //nova inclinação no ponto médio do intervalo de omega
+
+        kt4 = omega + h*kw3                         //inclinação no final do intervalo de theta
+        kw4 = -g/l*Math.sin(theta+h*kt3)            //inclinação no final do intervalo de omega 
+
+        // Método Runge-Kutta
+        theta = theta + h/6.0*(kt1 + 2*kt2 + 2*kt3 + kt4)
+        omega = omega + h/6.0*(kw1 + 2*kw2 + 2*kw3 + kw4)
+
+       // t = t + h    
+
+       // thetaA = theta0*Math.cos(Math.sqrt(g/l)*t)
+
+        
+   }
+
+
+    function iniciar()
+    {
+        theta0 = (Number(document.getElementById("theta0").value) * pi)/180;
+        theta = theta0
+
+        
+        function simular()
+        {
+            pincel.clearRect(0, 0, 400, 400);
+            
+            rk()
+
+           x = 100*l*Math.sin(theta)+200;
+           y = 100*l*Math.cos(theta)+165;            
+
+            desenhar()
+
+            console.log(theta)
+            //console.log(x, y, aa, va, theta)       
+        } 
+        setInterval(simular, 1)
+    }
+    
+  
+</script>
+</body>
+</html>
