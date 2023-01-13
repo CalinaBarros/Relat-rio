@@ -33,28 +33,33 @@
     var pincel = canvas.getContext("2d");
 
     //variáveis para cálculo        
-        var l = 1.5//Number(document.getElementById("l").value);
-        var g = 10//Number(document.getElementById("g").value)
-        var theta0;
-        var pi = 3.14159265359;
-        var omega = 0, theta, h = 0.004, t=0, thetaA;
-        var kt1, kt2, kt3, kt4, kw1, kw2, kw3, kw4, x=200, y=265;            
+    var l, g, theta0, R = 15;
+    var pi = 3.14159265359;
+    var omega, theta, h, t, thetaA;
+    var kt1, kt2, kt3, kt4, kw1, kw2, kw3, kw4, x, y;            
         
    function desenhar()
    {
+        //linha horizontal fixa
         pincel.moveTo(300, 100);
         pincel.lineTo(100, 100);
         
+        //linha do pêndulo
         pincel.moveTo(200, 100);
-        pincel.lineTo(x, 250);
+        pincel.lineTo(x-R*Math.sin(theta), y-R*Math.cos(theta));
         pincel.stroke();
         
+        //esfera do pêndulo
         pincel.beginPath()
-        pincel.arc(x, 265, 15, 0, Math.PI * 2);
+        pincel.arc(x, y, R, 0, Math.PI * 2);
         pincel.stroke();
    } 
-       
-    desenhar()
+   
+   condicoesIniciais()
+   
+   conversao()
+
+   desenhar()
 
    function rk() //função Runge-Kutta
    {
@@ -77,33 +82,58 @@
 
        t = t + h    
 
-       thetaA = theta0*Math.cos(Math.sqrt(g/l)*t)
+       //thetaA = theta0*Math.cos(Math.sqrt(g/l)*t)
 
         
    }
 
 
-    function iniciar()
-    {
+   function conversao()
+   {
+        x = 100*l*Math.sin(theta) + 200;
+        y = 100*l*Math.cos(theta) + 100;
+   }
+
+
+   function condicoesIniciais()
+   {
+
+        l = Number(document.getElementById("l").value);
+        g = Number(document.getElementById("g").value)
+        omega = 0, h = 0.004, t=0;
+
         theta0 = (Number(document.getElementById("theta0").value) * pi)/180;
         theta = theta0
+   }
 
+
+   function simular()
+    {
+        pincel.clearRect(0, 0, 400, 400);
         
-        function simular()
+        rk()                   
+
+        conversao()
+
+        desenhar()
+
+        //console.log(t, theta)
+        //console.log(x, y, aa, va, theta)       
+    }
+
+    
+    var c = true
+
+    function iniciar()
+    {
+        condicoesIniciais() 
+
+        if (c === true)
         {
-            pincel.clearRect(0, 0, 400, 400);
-            
-            rk()
-
-           x = 100*l*Math.sin(theta)+200;
-           y = 100*l*Math.cos(theta)+165;            
-
-            desenhar()
-
-            console.log(t, theta)
-            //console.log(x, y, aa, va, theta)       
-        } 
-        setInterval(simular, 1)
+            setInterval(simular, 1)
+            c = false
+        }
+        
     }
     
   
